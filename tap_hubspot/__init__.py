@@ -320,15 +320,15 @@ def request(url, params=None):
 # }
 
 def lift_properties_and_versions(record):
-    for key, value in record.get('properties', {}).items():
-        computed_key = "property_{}".format(key)
-        versions = value.get('versions')
-        record[computed_key] = value
-
-        if versions:
-            if not record.get('properties_versions'):
-                record['properties_versions'] = []
-            record['properties_versions'] += versions
+    # for key, value in record.get('properties', {}).items():
+    #     computed_key = "property_{}".format(key)
+    #     versions = value.get('versions')
+    #     record[computed_key] = value
+    # 
+    #     if versions:
+    #         if not record.get('properties_versions'):
+    #             record['properties_versions'] = []
+    #         record['properties_versions'] += versions
     return record
 
 @backoff.on_exception(backoff.constant,
