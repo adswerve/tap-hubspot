@@ -457,7 +457,11 @@ def sync_contacts(STATE, ctx):
     LOGGER.info("sync_contacts from %s", start)
 
     max_bk_value = start
-    schema = load_schema("contacts")
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema("contacts")
 
     singer.write_schema("contacts", schema, ["vid"], [bookmark_key], catalog.get('stream_alias'))
 
@@ -533,8 +537,12 @@ def sync_companies(STATE, ctx):
     bookmark_key = 'hs_lastmodifieddate'
     start = utils.strptime_to_utc(get_start(STATE, "companies", bookmark_key))
     LOGGER.info("sync_companies from %s", start)
-    # schema = load_schema('companies')
-    schema = catalog["schema"]
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('companies')
+
     singer.write_schema("companies", schema, ["companyId"], [bookmark_key], catalog.get('stream_alias'))
 
     # Because this stream doesn't query by `lastUpdated`, it cycles
@@ -600,9 +608,13 @@ def sync_deals(STATE, ctx):
     most_recent_modified_time = start
     params = {'limit': 100,
               'includeAssociations': False,
-              'properties' : []}
+              'properties': []}
 
-    schema = load_schema("deals")
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('deals')
+
     singer.write_schema("deals", schema, ["dealId"], [bookmark_key], catalog.get('stream_alias'))
 
     # Check if we should  include associations
@@ -658,7 +670,12 @@ def sync_deals(STATE, ctx):
 def sync_campaigns(STATE, ctx):
     catalog = ctx.get_catalog_from_id(singer.get_currently_syncing(STATE))
     mdata = metadata.to_map(catalog.get('metadata'))
-    schema = load_schema("campaigns")
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('campaigns')
+
     singer.write_schema("campaigns", schema, ["id"], catalog.get('stream_alias'))
     LOGGER.info("sync_campaigns(NO bookmarks)")
     url = get_url("campaigns_all")
@@ -674,7 +691,11 @@ def sync_campaigns(STATE, ctx):
 
 
 def sync_entity_chunked(STATE, catalog, entity_name, key_properties, path):
-    schema = load_schema(entity_name)
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema(entity_name)
+
     bookmark_key = 'startTimestamp'
 
     singer.write_schema(entity_name, schema, key_properties, [bookmark_key], catalog.get('stream_alias'))
@@ -751,7 +772,12 @@ def sync_email_events(STATE, ctx):
 def sync_contact_lists(STATE, ctx):
     catalog = ctx.get_catalog_from_id(singer.get_currently_syncing(STATE))
     mdata = metadata.to_map(catalog.get('metadata'))
-    schema = load_schema("contact_lists")
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('contact_lists')
+
     bookmark_key = 'updatedAt'
     singer.write_schema("contact_lists", schema, ["listId"], [bookmark_key], catalog.get('stream_alias'))
 
@@ -779,7 +805,12 @@ def sync_contact_lists(STATE, ctx):
 def sync_forms(STATE, ctx):
     catalog = ctx.get_catalog_from_id(singer.get_currently_syncing(STATE))
     mdata = metadata.to_map(catalog.get('metadata'))
-    schema = load_schema("forms")
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('forms')
+
     bookmark_key = 'updatedAt'
 
     singer.write_schema("forms", schema, ["guid"], [bookmark_key], catalog.get('stream_alias'))
@@ -808,7 +839,12 @@ def sync_forms(STATE, ctx):
 def sync_workflows(STATE, ctx):
     catalog = ctx.get_catalog_from_id(singer.get_currently_syncing(STATE))
     mdata = metadata.to_map(catalog.get('metadata'))
-    schema = load_schema("workflows")
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('workflows')
+
     bookmark_key = 'updatedAt'
     singer.write_schema("workflows", schema, ["id"], [bookmark_key], catalog.get('stream_alias'))
     start = get_start(STATE, "workflows", bookmark_key)
@@ -837,7 +873,12 @@ def sync_workflows(STATE, ctx):
 def sync_owners(STATE, ctx):
     catalog = ctx.get_catalog_from_id(singer.get_currently_syncing(STATE))
     mdata = metadata.to_map(catalog.get('metadata'))
-    schema = load_schema("owners")
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('owners')
+
     bookmark_key = 'updatedAt'
 
     singer.write_schema("owners", schema, ["ownerId"], [bookmark_key], catalog.get('stream_alias'))
@@ -869,7 +910,12 @@ def sync_owners(STATE, ctx):
 def sync_engagements(STATE, ctx):
     catalog = ctx.get_catalog_from_id(singer.get_currently_syncing(STATE))
     mdata = metadata.to_map(catalog.get('metadata'))
-    schema = load_schema("engagements")
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('engagements')
+
     bookmark_key = 'lastUpdated'
     singer.write_schema("engagements", schema, ["engagement_id"], [bookmark_key], catalog.get('stream_alias'))
     start = get_start(STATE, "engagements", bookmark_key)
@@ -918,7 +964,12 @@ def sync_engagements(STATE, ctx):
 def sync_deal_pipelines(STATE, ctx):
     catalog = ctx.get_catalog_from_id(singer.get_currently_syncing(STATE))
     mdata = metadata.to_map(catalog.get('metadata'))
-    schema = load_schema('deal_pipelines')
+
+    if "schema" in catalog:
+        schema = catalog["schema"]
+    else:
+        schema = load_schema('deal_pipelines')
+
     singer.write_schema('deal_pipelines', schema, ['pipelineId'], catalog.get('stream_alias'))
     LOGGER.info('sync_deal_pipelines')
     data = request(get_url('deal_pipelines')).json()
