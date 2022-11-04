@@ -64,6 +64,14 @@ We supplied the following `tap-config.json`:
 }
 ```
 
+In order for the sync to run without 403 errors, we gave the private app the following Scopes:
+
+`CRM` section: 
+Everything - `Read` (we can iterate on it later - it's possible we gave it too many `Read` Scopes)
+
+`Standard` section:
+- `automation` - `Request`
+- `content` - `Request`
 ---
 
 Copyright &copy; 2017 Stitch
