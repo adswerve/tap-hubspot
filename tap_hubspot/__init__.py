@@ -217,31 +217,6 @@ def load_schema(entity_name):
 
     return schema
 
-#pylint: disable=invalid-name
-def acquire_access_token_from_refresh_token():
-    payload = {
-        "grant_type": "refresh_token",
-        "redirect_uri": CONFIG['redirect_uri'],
-        "refresh_token": CONFIG['refresh_token'],
-        "client_id": CONFIG['client_id'],
-        "client_secret": CONFIG['client_secret'],
-    }
-
-
-    resp = requests.post(BASE_URL + "/oauth/v1/token", data=payload)
-    if resp.status_code == 403:
-        raise InvalidAuthException(resp.content)
-
-    resp.raise_for_status()
-    auth = resp.json()
-    CONFIG['access_token'] = auth['access_token']
-    CONFIG['refresh_token'] = auth['refresh_token']
-    CONFIG['token_expires'] = (
-        datetime.datetime.utcnow() +
-        datetime.timedelta(seconds=auth['expires_in'] - 600))
-    LOGGER.info("Token refreshed. Expires at %s", CONFIG['token_expires'])
-
-
 def giveup(exc):
     return exc.response is not None \
         and 400 <= exc.response.status_code < 500 \
@@ -268,15 +243,16 @@ def parse_source_from_url(url):
 def get_params_and_headers(params):
     """
     This function makes a params object and headers object based on the
-    authentication values available. If there is an `hapikey` in the config, we
-    need that in `params` and not in the `headers`. Otherwise, we need to get an
+    authentication values available. We need to get an
     `access_token` to put in the `headers` and not in the `params`
+    As of Nov 30, 2022, HubSpot deprecates API Key
+    We have to authenticate API calls with private app access token
+    https://knowledge.hubspot.com/integrations/how-do-i-get-my-hubspot-api-key
+    https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app
     """
     params = params or {}
     hapikey = CONFIG['hapikey']
     if hapikey is None:
-        if CONFIG['token_expires'] is None or CONFIG['token_expires'] < datetime.datetime.utcnow():
-            acquire_access_token_from_refresh_token()
         headers = {'Authorization': 'Bearer {}'.format(CONFIG['access_token'])}
     else:
         params['hapikey'] = hapikey

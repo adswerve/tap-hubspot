@@ -38,6 +38,33 @@ As an alternative to OAuth 2.0 authentication during development, you may specif
 
 To use an API key, include a `hapikey` configuration variable in your `config.json` and set it to the value of your HubSpot API key. Any OAuth authentication parameters in your `config.json` **will be ignored** if this key is present!
 
+November 2022 notes:
+
+As of Nov 30, 2022, HubSpot deprecates the use of API keys, and instead we will have to use private app access token to authenticate.
+
+https://knowledge.hubspot.com/integrations/how-do-i-get-my-hubspot-api-key
+
+https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app
+
+We supplied the following `tap-config.json`:
+
+```
+{
+        "pipeline_type": "hubspot",
+        "client": "client_name",
+        "client_id": "1234567",
+        "client_secret": "we_left_it_empty",
+        "refresh_token": "hubspot-token",
+        "start_date": "2022-11-01",
+        "project_id": "project_id",
+        "dataset_id": "hubspot",
+        "client_service_account_id": "client_service_account_id",
+        "redirect_uri": "https://api.hubspot.com/",
+        "access_token": "your_private_app_access_token"
+}
+```
+
 ---
 
 Copyright &copy; 2017 Stitch
+

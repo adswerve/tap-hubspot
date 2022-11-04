@@ -98,3 +98,6 @@ config.json
 .autoenv.zsh
 *~
 env-vars*
+
+# Pycharm
+.idea
