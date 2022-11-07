@@ -58,7 +58,6 @@ CONFIG = {
     "client_secret": None,
     "refresh_token": None,
     "start_date": None,
-    "hapikey": None,
     "include_inactives": None,
 }
 
@@ -251,12 +250,15 @@ def get_params_and_headers(params):
     https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app
     """
     params = params or {}
-    hapikey = CONFIG['hapikey']
-    if hapikey is None:
-        headers = {'Authorization': 'Bearer {}'.format(CONFIG['access_token'])}
-    else:
-        params['hapikey'] = hapikey
-        headers = {}
+
+    if CONFIG.get("hapikey", None):
+        raise Exception("As of November 30, 2022, HubSpot deprecated API Key authentication. Please authenticate with a private app access token.\n "
+                        "Please remove your hapikey from the config file.\n"
+                        "Please read more here: \n"
+                        "https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app\n"
+                        "https://knowledge.hubspot.com/integrations/how-do-i-get-my-hubspot-api-key")
+
+    headers = {'Authorization': 'Bearer {}'.format(CONFIG['access_token'])}
 
     if 'user_agent' in CONFIG:
         headers['User-Agent'] = CONFIG['user_agent']
@@ -1114,7 +1116,9 @@ def main_impl():
          "client_id",
          "client_secret",
          "refresh_token",
-         "start_date"])
+         "start_date",
+         "access_token"
+         ])
 
     CONFIG.update(args.config)
     STATE = {}
